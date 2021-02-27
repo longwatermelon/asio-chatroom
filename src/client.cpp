@@ -20,7 +20,7 @@ void get(tcp::socket* sock)
 
 		if (bytes > 0)
 		{
-			std::cout << "\b \b \b ";
+			std::cout << "\r   \r";
 
 			std::vector<char> buf(bytes);
 			sock->read_some(asio::buffer(buf.data(), buf.size()));
