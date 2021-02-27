@@ -26,6 +26,7 @@ void get_data()
 		{
 			std::lock_guard<std::mutex> lock(g_mutex);
 			std::string data;
+
 			for (int i = 0; i < g_users.size(); i++)
 			{
 				std::shared_ptr<tcp::socket>& sock = g_users[i];

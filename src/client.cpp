@@ -38,6 +38,12 @@ void get(tcp::socket* sock)
 
 void send(tcp::socket* sock, const std::string msg)
 {
+	if (msg.size() >= 500)
+	{
+		std::cout << "Your message exceeds the 500 character limit\n";
+		return;
+	}
+
 	sock->write_some(asio::buffer(msg.data(), msg.size()));
 }
 
@@ -63,7 +69,7 @@ int main()
 
 	sock.connect(tcp::endpoint(address::from_string("127.0.0.1"), 1234));
 
-	send(&sock, "new user has joined");
+	send(&sock, "new user joined");
 
 	std::thread read(get, &sock);
 	std::thread inp(input, &sock);
