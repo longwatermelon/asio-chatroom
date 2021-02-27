@@ -16,7 +16,7 @@ using namespace asio::ip;
 std::vector<std::shared_ptr<tcp::socket>> g_users;
 std::mutex g_mutex;
 
-void send_data(const std::string msg);
+void send_data(const std::string msg, int ignored);
 
 
 void get_data()
@@ -26,8 +26,10 @@ void get_data()
 		{
 			std::lock_guard<std::mutex> lock(g_mutex);
 			std::string data;
-			for (auto sock : g_users)
+			for (int i = 0; i < g_users.size(); i++)
 			{
+				std::shared_ptr<tcp::socket>& sock = g_users[i];
+
 				size_t bytes = sock->available();
 
 				if (bytes > 0)
@@ -44,7 +46,10 @@ void get_data()
 					}
 
 					std::cout << data;
-					send_data(data);
+
+					std::stringstream ss;
+					ss << "user " << i << ": " << data;
+					send_data(ss.str(), i);
 				}
 			}
 		}
@@ -54,10 +59,15 @@ void get_data()
 }
 
 
-void send_data(const std::string msg)
+void send_data(const std::string msg, int ignored)
 {
-	for (auto sock : g_users)
+	for (int i = 0; i < g_users.size(); i++)
 	{
+		if (i == ignored)
+			continue;
+
+		std::shared_ptr<tcp::socket>& sock = g_users[i];
+
 		sock->write_some(asio::buffer(msg.data(), msg.size()));
 	}
 }
@@ -69,6 +79,7 @@ void accept_new_users(tcp::acceptor* act, asio::io_service* service)
 	{
 		auto sock = std::make_shared<tcp::socket>(*service);
 		act->accept(*sock);
+
 		{
 			std::lock_guard<std::mutex> lock(g_mutex);
 			g_users.push_back(sock);
