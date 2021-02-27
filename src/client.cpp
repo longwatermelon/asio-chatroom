@@ -63,7 +63,7 @@ int main()
 
 	sock.connect(tcp::endpoint(address::from_string("127.0.0.1"), 1234));
 
-	send(&sock, "test\n");
+	send(&sock, "new user has joined");
 
 	std::thread read(get, &sock);
 	std::thread inp(input, &sock);
