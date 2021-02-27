@@ -50,7 +50,6 @@ void get_data()
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
 	}
 }
 
@@ -73,7 +72,7 @@ void accept_new_users(tcp::acceptor* act, asio::io_service* service)
 		{
 			std::lock_guard<std::mutex> lock(g_mutex);
 			g_users.push_back(sock);
-			std::cout << "new user established.\n";
+			std::cout << "New user connected\n";
 		}
 	}
 }
